@@ -1,7 +1,32 @@
+# Environment files with encryption keys
+.env.keys
+.env.vault
+.env.not.encrypted
 
-# Playwright
+# Node modules
 node_modules/
+
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db

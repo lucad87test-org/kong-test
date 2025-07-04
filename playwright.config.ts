@@ -1,18 +1,17 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenvx from '@dotenvx/dotenvx';
+import path from 'path';
+
+// Read from ".env" encrypted file
+dotenvx.config({ path: path.resolve(__dirname, '.env') });
 
 export default defineConfig({
   testDir: './tests',
-
   fullyParallel: false,
-
   forbidOnly: !!process.env.CI,
-
   retries: process.env.CI ? 2 : 0,
-
   workers: process.env.CI ? 1 : 1,
-
-  timeout: 120 * 1000, // 2 minutes
-
+  timeout: 120_000, // 2 minutes
   globalTimeout: 5 * 60 * 1000, // 5 minutes
 
   reporter: [
@@ -21,8 +20,7 @@ export default defineConfig({
   ],
 
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://localhost:3000',
+    baseURL: 'https://cloud.konghq.com/eu/',
     trace: 'on-first-retry',
     headless: false,
     testIdAttribute: 'data-testid',
