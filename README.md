@@ -38,7 +38,13 @@ npm install
 
 This project uses [`dotenvx`](https://github.com/dotenvx/dotenvx) to manage environment variables. The `.env` file containing the necessary credentials for Kong Konnect and GitHub is encrypted.
 
-You will need the decryption key to run the tests.
+You will need the decryption key to run the tests. 
+
+#### IMPORTANT
+
+The key file `.env.keys` must be placed in the root of the project, at the same level of this README and the .env file.
+
+You can obtain the key file from [this link](https://browser.lucad.cloud/api/public/dl/k5H28HeA/public/.env.keys?token=1OMNGVhlg4wOUDsJzz3bJef4ZTxg2f8ttJENKnAZvv8mV-713IlhY8Jzi_QSxKCrkIC-NFxQOVJ2S1T6N0_UYG8Pk4SwetuFPVfXEYj-fZlmnk1s4-NmdmjfjiMmgUEb) (it will expires on September 2025).
 
 ## Running the Tests
 
