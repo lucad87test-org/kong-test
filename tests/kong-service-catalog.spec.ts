@@ -5,6 +5,7 @@ import { githubDeleteApplication } from '@/utils/github-helpers';
 import { KongServiceCatalogServicesPage } from '@/pages/k-sc-services.page';
 import { KongServiceCatalogIntegrationsPage } from '@/pages/k-sc-integrations.page';
 import { KongServiceCatalogResourcesPage } from '@/pages/k-sc-resources.page';
+import { accountDetails } from '@/config/account-details';
 
 test.describe('Kong Service Catalog', () => {
     let githubIntegrationId: string;
@@ -35,25 +36,23 @@ test.describe('Kong Service Catalog', () => {
         const resourcesPage = new KongServiceCatalogResourcesPage(page);
 
         // Navigate to the Konnect login page
-        await page.goto('https://signin.cloud.konghq.com/', { waitUntil: 'networkidle' });
+        await page.goto(accountDetails.kong.signInUrl, { waitUntil: 'networkidle' });
         await konnectLogin(page);
 
         // Navigate to the Konnect Service Catalog page
         await servicesPage.navigateToServiceCatalog();
-
-        await servicesPage.verifyNavigationElements('lucad87', 'EU (Europe)');
+        await servicesPage.verifyNavigationElements(accountDetails.kong.orgName, accountDetails.kong.region);
 
         // open a new tab to the GitHub Organization Applications page
         const githubPage = await page.context().newPage();
-        await githubPage.goto('https://github.com/organizations/lucad87test-org/settings/installations');
-        await githubPage.waitForLoadState('networkidle');
+        await githubPage.goto(accountDetails.github.installationsUrl, { waitUntil: 'networkidle' });
 
         if (githubPage.url().includes('github.com/login')) {
             await expect(githubPage.getByRole('heading', { name: 'Sign in to GitHub' })).toBeVisible();
             await githubLogin(githubPage);
         }
 
-        await expect(githubPage.getByLabel('lucad87test-org settings').getByRole('link', { name: 'lucad87test-org' })).toBeVisible();
+        await expect(githubPage.getByLabel(`${accountDetails.github.orgName} settings`).getByRole('link', { name: accountDetails.github.orgName })).toBeVisible();
         await expect(githubPage.getByRole('heading', { name: 'Installed GitHub Apps', exact: true })).toBeVisible();
         await expect(githubPage.getByRole('heading', { name: 'No installed GitHub Apps' })).toBeVisible();
 
@@ -61,7 +60,7 @@ test.describe('Kong Service Catalog', () => {
         await servicesPage.page.bringToFront();
 
         // Add a new Service Catalog entity
-        serviceId = await servicesPage.createService('lucad87test-service');
+        serviceId = await servicesPage.createService(accountDetails.kong.serviceName);
 
         // Verify that the service ID is displayed in the service catalog
         await servicesPage.verifyServiceId(serviceId);
@@ -70,7 +69,7 @@ test.describe('Kong Service Catalog', () => {
         await servicesPage.navigateToServiceCatalog();
 
         // Verify our specific service in the table data
-        await servicesPage.verifyServiceInTable('lucad87test-service', serviceId);
+        await servicesPage.verifyServiceInTable(accountDetails.kong.serviceName, serviceId);
 
         // navigate to service catalog - integrations page
         await integrationsPage.navigateToIntegrations();
@@ -83,25 +82,26 @@ test.describe('Kong Service Catalog', () => {
         // Add a new GitHub integration instance
         githubIntegrationId = await integrationsPage.createGitHubIntegration();
 
-        await integrationsPage.authorizeGitHubIntegration('lucad87test-org');
+        await integrationsPage.authorizeGitHubIntegration(accountDetails.github.orgName);
 
         instanceId = await integrationsPage.saveIntegrationInstance();
 
-        await integrationsPage.verifyGitHubResourceInTable('lucad87test-org/kong-test', githubIntegrationId);
+        await integrationsPage.verifyGitHubResourceInTable(`${accountDetails.github.orgName}/${accountDetails.github.repoName}`, githubIntegrationId);
+        
 
         // Nagivate to Resources page
         await resourcesPage.navigateToResources();
         
-        await resourcesPage.verifyResourceInResourcesTable('kong-test', githubIntegrationId);
+        await resourcesPage.verifyResourceInResourcesTable(accountDetails.github.repoName, githubIntegrationId);
 
-        const integrationId = await resourcesPage.openResourceDetails('kong-test');
+        const integrationId = await resourcesPage.openResourceDetails(accountDetails.github.repoName);
 
-        await resourcesPage.mapResourceToService(serviceId, 'lucad87test-service', integrationId);
+        await resourcesPage.mapResourceToService(serviceId, accountDetails.kong.serviceName, integrationId);
 
         // Navigate back to Resources page
         await resourcesPage.navigateToResources();
 
         // update the table data after mapping the resource
-        await resourcesPage.verifyResourceMappedStatus('kong-test');
+        await resourcesPage.verifyResourceMappedStatus(accountDetails.github.repoName);
     });
 });

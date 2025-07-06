@@ -1,8 +1,10 @@
 import { Page, expect } from '@playwright/test';
-import { githubLogin } from '../utils/login-helpers';
+import { githubLogin } from '@/utils/login-helpers';
+import { accountDetails } from '@/config/account-details';
+
 
 async function githubDeleteApplication(page: Page) {
-    await page.goto('https://github.com/organizations/lucad87test-org/settings/installations');
+    await page.goto(accountDetails.github.installationsUrl);
 
     // Wait for the page to load completely
     await page.waitForLoadState('networkidle');
@@ -13,13 +15,13 @@ async function githubDeleteApplication(page: Page) {
         await githubLogin(page);
     }
 
-    const installedApp = page.getByText('Konnect Service Catalog');
+    const installedApp = page.getByText(accountDetails.github.appName);
     if (!(await installedApp.isVisible())) {
         return false;
     }
 
-    await expect(page.getByText('Konnect Service Catalog Configure')).toBeVisible();
-    await expect(page.getByText('Konnect Service Catalog')).toBeVisible();
+    await expect(page.getByText(`${accountDetails.github.appName} Configure`)).toBeVisible();
+    await expect(page.getByText(accountDetails.github.appName)).toBeVisible();
     await page.getByRole('link', { name: 'Configure' }).click();
 
     page.on('dialog', async dialog => {

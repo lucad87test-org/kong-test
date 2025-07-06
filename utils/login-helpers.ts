@@ -1,16 +1,12 @@
 import { expect, Page } from '@playwright/test';
-
-const loginConstants = {
-    auth0Instance: 'dev-d3rsvpl2fqxk1poj',
-    konnectOrgSsoLoginPath: 'okta-login-d3rsvpl2fqxk1poj',
-};
+import { accountDetails } from '@/config/account-details';
 
 const USERNAME = process.env.USERNAME || '';
 const PASSWORD = process.env.PASSWORD || '';
 
 async function auth0Login(auth0Page: Page) {
-    expect(auth0Page.url()).toContain(`${loginConstants.auth0Instance}.eu.auth0.com/u/login`);
-    await expect(auth0Page.locator('header')).toContainText(`Log in to ${loginConstants.auth0Instance} to continue to Kong App.`);
+    expect(auth0Page.url()).toContain(`${accountDetails.okta.auth0Instance}.eu.auth0.com/u/login`);
+    await expect(auth0Page.locator('header')).toContainText(`Log in to ${accountDetails.okta.auth0Instance} to continue to Kong App.`);
     await expect(auth0Page.getByRole('textbox', { name: 'Email address' })).toBeVisible();
     await expect(auth0Page.getByRole('textbox', { name: 'Password' })).toBeVisible();
     await expect(auth0Page.getByRole('button', { name: 'Continue', exact: true })).toBeVisible();
@@ -26,7 +22,7 @@ async function konnectLogin(page: Page) {
     await expect(page.getByTestId('signin-page-form-layout').locator('div').filter({ hasText: 'Company SSOEnter your' }).first()).toBeVisible();
     await expect(page.getByTestId('organization-sso-login-submit-button')).toHaveAttribute('disabled');
 
-    await page.getByTestId('organization-login-path-input').fill(loginConstants.konnectOrgSsoLoginPath);
+    await page.getByTestId('organization-login-path-input').fill(accountDetails.okta.orgSsoLoginPath);
     await expect(page.getByTestId('organization-sso-login-submit-button')).not.toHaveAttribute('disabled');
 
     await page.getByTestId('organization-sso-login-submit-button').click();
