@@ -14,12 +14,12 @@ test.describe('Kong Service Catalog', () => {
     test.beforeAll(async ({ browser, request }) => {
         const page = await browser.newPage();
         const isGitHubAppDeleted = await githubDeleteApplication(page);
-        console.log('Found GitHub application to delete:', isGitHubAppDeleted);
+        // console.log('Found GitHub application to delete:', isGitHubAppDeleted);
         await page.close();
         
         const {services, instances } = await apiKonnectDeleteLeftovers(request);
-        console.log('Deleted services:', services);
-        console.log('Deleted instances:', instances);
+        // console.log('Deleted services:', services);
+        // console.log('Deleted instances:', instances);
     });
 
     test.afterAll(async ({ browser, request }) => {

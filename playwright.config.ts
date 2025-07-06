@@ -22,7 +22,7 @@ export default defineConfig({
   use: {
     baseURL: 'https://cloud.konghq.com/eu/',
     trace: 'on-first-retry',
-    headless: false,
+    headless: true,
     testIdAttribute: 'data-testid',
   },
 
